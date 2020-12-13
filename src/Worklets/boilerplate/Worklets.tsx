@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, { runOnUI, useSharedValue } from "react-native-reanimated";
+import { ReText } from "react-native-redash";
 
 import { Button } from "../../components";
 
@@ -14,7 +15,7 @@ const styles = StyleSheet.create({
 
 const formatDatetime = (datetime: Date) => {
   "worklet";
-  return datetime.toLocaleDateString("en-US", {
+  return datetime.toLocaleDateString("en-IN", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -22,23 +23,19 @@ const formatDatetime = (datetime: Date) => {
   });
 };
 
-const sayHello = (
-  text: Animated.SharedValue<string>,
-  from: string,
-  cb: (v: string) => void
-) => {
-  "worklet";
-  text.value = `Hello from ${from} on ${Platform.OS} at ${formatDatetime(
-    new Date()
-  )}`;
-  cb(`Hello from ${from} on ${Platform.OS} at ${formatDatetime(new Date())}`);
+const msg = 'Hello world'
+
+const sayHello = (sharedValue, text: string, from: string) => {
+  "worklet"; //tells reanimated that it is a directive
+  sharedValue.value = `${text} ${from} on ${Platform.Version} at ${formatDatetime(new Date())}`
 };
 
 const Worklets = () => {
-  console.log(sayHello);
+  const text = useSharedValue("")
   return (
     <View style={styles.container}>
-      <Button label="Say Hello" primary onPress={() => null} />
+      <ReText text={text} />
+      <Button label="Say Hello" primary onPress={() => runOnUI(sayHello)(text, 'Hello', "Abhishek")} />
     </View>
   );
 };

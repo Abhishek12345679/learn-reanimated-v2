@@ -1,5 +1,5 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, LayoutRectangle } from "react-native";
 import Animated, {
   useAnimatedGestureHandler,
   useSharedValue,
@@ -26,6 +26,8 @@ interface GestureProps {
 }
 
 const Gesture = ({ width, height }: GestureProps) => {
+  const [container, setContainer] = useState<null | LayoutRectangle>(null);
+
   const boundX = width - CARD_WIDTH;
   const boundY = height - CARD_HEIGHT;
   const translateX = useSharedValue(0);
@@ -38,6 +40,7 @@ const Gesture = ({ width, height }: GestureProps) => {
     }
   >({
     onStart: (_, ctx) => {
+
       ctx.offsetX = translateX.value;
       ctx.offsetY = translateY.value;
     },
@@ -46,6 +49,7 @@ const Gesture = ({ width, height }: GestureProps) => {
       translateY.value = clamp(ctx.offsetY + event.translationY, 0, boundY);
     },
     onEnd: ({ velocityX, velocityY }) => {
+
       translateX.value = withBouncing(
         withDecay({
           velocity: velocityX,
@@ -70,6 +74,9 @@ const Gesture = ({ width, height }: GestureProps) => {
       ],
     };
   });
+  console.log({ width, height })
+
+
   return (
     <View style={styles.container}>
       <PanGestureHandler onGestureEvent={onGestureEvent}>
